@@ -8,7 +8,7 @@ def age_checker(dob):
     
     current_date = date.today()
 
-    had_birthday_this_year = (dob_object.month, dob_object.day) < (current_date.month, current_date.day)
+    had_birthday_this_year = (dob_object.month, dob_object.day) <= (current_date.month, current_date.day)
     
     if had_birthday_this_year:
         age = current_date.year - dob_object.year 
