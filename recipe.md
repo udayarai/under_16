@@ -1,10 +1,24 @@
-# {{PROBLEM}} Function Design Recipe
+# Age_checker Function Design Recipe
 
-Copy this into a `recipe.md` in your project and fill it out.
+This is a recepie for age_checker function
 
 ## 1. Describe the Problem
 
-_Put or write the user story here. Add any clarifying notes you might have._
+```
+As an admin
+So that I can determine whether a user is old enough
+I want to allow them to enter their date of birth as a string in the format `YYYY-MM-DD`.
+
+As an admin
+So that under-age users can be denied entry
+I want to send a message to any user under the age of 16 saying their access is denied
+And telling them their current age and the required age (16).
+
+As an admin
+So that old enough users can be granted access
+I want to send a message to any user aged 16 or older to say that access has been granted.
+
+```
 
 ## 2. Design the Function Signature
 
@@ -13,14 +27,14 @@ _Include the name of the function, its parameters, return value, and side effect
 ```python
 # EXAMPLE
 
-def extract_uppercase(mixed_words):
-    """Extracts uppercase words from a string
+def age_checker(dob):
+    """Grants access based on age
 
     Parameters: (list all parameters and their types)
-        mixed_words: a string containing words (e.g. "hello WORLD")
+        dob: a string containing date of birth in format (e.g. "YYYY-MM-DD")
 
     Returns: (state the return value and its type)
-        a list of strings, each one a word (e.g. ["WORLD"])
+        a string statement "Access granted!" or "Access denied"
 
     Side effects: (state any side effects)
         This function doesn't print anything or have any other side-effects
@@ -36,46 +50,28 @@ _Make a list of examples of what the function will take and return._
 # EXAMPLE
 
 """
-Given a lower and an uppercase word
-It returns a list with the uppercase word
+Given the correct dob format 1997-12-10
+It returns Access granted!
 """
-extract_uppercase("hello WORLD") => ["WORLD"]
+age_checker("1997-12-10") => "Access granted!"
 
 """
-Given two uppercase words
-It returns a list with both words
+Given the correct dob format 2015-10-08
+It returns Access denied!
 """
-extract_uppercase("HELLO WORLD") => ["HELLO", "WORLD"]
+age_checker("2015-10-08") => Access denied!
 
 """
-Given two lowercase words
-It returns an empty list
+Given incorrect dob format 2015/12/25
+It returns an exception saying Invalid date
 """
-extract_uppercase("hello world") => []
+age_checker("2015/12/25") => Invalid date
 
 """
-Given a lower and a mixed case word
-It returns an empty list
+Given incorrect date for e.g. 2023-34-21
+It returns string Invalid date
 """
-extract_uppercase("hello WoRLD") => []
-
-"""
-Given a lowercase word and an uppercase word with an exclamation mark
-It returns a list with the uppercase word, no exclamation mark
-"""
-extract_uppercase("hello WORLD!") => ["WORLD"]
-
-"""
-Given an empty string
-It returns an empty list
-"""
-extract_uppercase("") => []
-
-"""
-Given a None value
-It throws an error
-"""
-extract_uppercase(None) throws an error
+age_checker("2023-34-21") => Invalid date
 ```
 
 _Encode each example as a test. You can add to the above list as you go._
@@ -88,16 +84,46 @@ Here's an example for you to start with:
 
 ```python
 # EXAMPLE
-
-from lib.extract_uppercase import *
+from lib.age_checker import *
+import pytest
 
 """
-Given a lower and an uppercase word
-It returns a list with the uppercase word
+Given the correct dob format 1997-12-10
+It returns Access granted!
 """
-def test_extract_uppercase_with_upper_then_lower():
-    result = extract_uppercase("hello WORLD")
-    assert result == ["WORLD"]
+def test_correct_dob_returns_access_granted():
+    assert age_checker("1997-12-10") == "Access granted!"
+
+"""
+Given the correct dob format 2015-10-08
+It returns Access denied!
+"""
+def test_correct_dob_under_16_returns_access_denied():
+    assert age_checker("2015-10-08") == "Access denied!"
+
+"""
+Given incorrect dob format 2015/12/25
+It returns an exception saying Invalid date
+"""
+def test_incorrect_dob_format_raises_exception():
+    with pytest.raises(Exception) as e:
+        age_checker("2015/12/25")
+    
+    actual = str(e.value)
+
+    assert actual == "Invalid date"
+
+"""
+Given incorrect date for e.g. 2023-34-21
+It returns string Invalid date
+"""
+def test_incorrect_dob_raises_exception():
+    with pytest.raises(Exception) as e:
+        age_checker(""2023-34-21"")
+    
+    actual = str(e.value)
+
+    assert actual == "Invalid date"
 ```
 
 Ensure all test function names are unique, otherwise pytest will ignore them!
